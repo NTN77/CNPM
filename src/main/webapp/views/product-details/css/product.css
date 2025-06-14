@@ -469,3 +469,33 @@ figure {
 #footer .content_end p{
     color: rgba(245, 241, 241, 0.7);
 }
+
+/* rating */
+.rating-start {
+    display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-rating {
+    border: none;
+    padding: 5px 25px;
+    background-color: pink;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-rating:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+#starRating .star {
+    color: #ccc;
+    cursor: pointer;
+    transition: 0.2s;
+}
+#starRating .star.selected {
+    color: #ffc107;
+}

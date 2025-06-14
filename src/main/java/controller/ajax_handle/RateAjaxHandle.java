@@ -1,10 +1,14 @@
 package controller.ajax_handle;
 
 import com.google.gson.Gson;
+import io.leangen.geantyref.TypeToken;
 import model.bean.Rate;
+import model.bean.RateNew;
 import model.bean.User;
 import model.service.ProductService;
+import model.service.RateNewService;
 import model.service.UserService;
+import okhttp3.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,11 +16,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/rate-ajax-handle")
 public class RateAjaxHandle extends HttpServlet {
+
+    private static final String URL_SETIMENT = "https://d547-35-185-8-178.ngrok-free.app/analyze";
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -71,6 +80,49 @@ public class RateAjaxHandle extends HttpServlet {
                 resp.setCharacterEncoding("UTF-8");
                 System.out.println(jsonRatesResponse);
                 resp.getWriter().write(jsonRatesResponse);
+            } else if (action.equals("rating")) {
+                if (sessionUser == null) {
+                    resp.getWriter().write("no user");
+                    return;
+                }
+                String comment = req.getParameter("comment");
+                String star = req.getParameter("star");
+                if (comment == null || star == null) {
+                    resp.getWriter().write("empty");
+                    return;
+                }
+                OkHttpClient client = new OkHttpClient();
+                Map<String, String> data = new HashMap<>();
+                data.put("text", comment);
+                Gson gson = new Gson();
+                String json = gson.toJson(data);
+
+                RequestBody body = RequestBody.create(
+                        json, MediaType.parse("application/json"));
+                Request request = new Request.Builder().url(URL_SETIMENT).post(body).build();
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String responseBody = response.body().string();
+                        Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                        Map<String, Object> result = gson.fromJson(responseBody, type);
+                        String sentiment = (String) result.get("sentiment");
+                        RateNew rateNew = new RateNew(
+                                Integer.parseInt(productId), sessionUser.getId(), Integer.parseInt(star), comment,
+                                0, sentiment);
+                        RateNewService rateNewService = RateNewService.getInstance();
+                        if (rateNewService.insertRate(rateNew) != 0) {
+                            resp.getWriter().write("success");
+                        } else {
+                            resp.getWriter().write("0");
+                        }
+                    } else {
+                        System.err.println("Lỗi khi gọi API: " + response.code());
+                        resp.getWriter().write("error server");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    resp.getWriter().write("error server");
+                }
             }
         }
     }
