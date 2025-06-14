@@ -1,0 +1,26 @@
+.rate-content {
+    margin: 0;
+    display: grid;
+    place-items: center;
+}
+
+.stars {
+    position: relative;
+    padding: 0.2rem;
+    white-space: nowrap;
+}
+
+.cover {
+    background: white;
+    height: 100%;
+    overflow: hidden;
+    mix-blend-mode: color;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+svg {
+    fill: gold;
+    width: 30px;
+}

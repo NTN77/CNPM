@@ -1,0 +1,41 @@
+* {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+nav {
+    padding: 25px 25px;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb .breadcrumb-item a {
+    color: #565959;
+    text-decoration: none;
+}
+.breadcrumb .breadcrumb-item a:hover {
+    color: #ff1a1a;
+}
+
+.pause_bt {
+    padding: 10px 40px;
+    margin-right: 10px;
+    border: none;
+    font-weight: bold;
+}
+
+.complete_bt {
+    padding: 10px 40px;
+    border: none;
+    font-weight: bold;
+    background-color: red;
+    color: white;
+}
+
+#inform {
+    background-color: #FBFADA;
+    border-radius: 10px;
+
+
+}

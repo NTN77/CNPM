@@ -1,0 +1,86 @@
+* {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+#infor_center {
+    display: none;
+}
+
+#bankaccount_infor {
+    display: none;
+}
+
+.product-img {
+    width: 50px;
+    height: 50px;
+}
+
+.product-quantity {
+    background-color: #357ebd;
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-weight: bold;
+}
+
+#infor_center {
+    background-color: rgba(0, 0, 0, .75);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: auto;
+    display: none;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+}
+
+.modal-wrapper {
+    padding: 10px;
+    width: 70%;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#infor_center_content {
+    max-height: 600px;
+    max-width: 100%;
+    overflow: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.color-for-bg {
+    background-color: #357ebd;
+}
+
+.color-for-text {
+    color: #357ebd;
+}
+#total_amount {
+    font-weight: bold;
+    color: red;
+}
+
+#inform {
+    background-color: #FBFADA;
+}
+#count-down {
+    background-color: red;
+    color: #FFFFFF;
+    font-size: 25px;
+    font-weight: bold;
+    margin: 0;
+    border-radius: 5px;
+}
+
+
+
+
+
