@@ -50,6 +50,9 @@ public class MainAdminController extends HttpServlet {
                     case "customer_management":
                         framePath = "/views/Admin/customer_management.jsp";
                         break;
+                    case "sentiment_manager":
+                        framePath = "/views/Admin/sentiment/sentiment.jsp";
+                        break;
                     case "banners_tips":
                         framePath = "/views/Admin/banners_tips.jsp";
                         break;

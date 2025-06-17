@@ -167,6 +167,16 @@
                     Quản lý đơn hàng custom
                 </a>
 
+                <a href="<%=request.getContextPath()%>/admin?func=sentiment_manager"
+                   class="nav-item nav-link
+                    <%if(func.equals("sentiment_manager")){%>
+                   active
+                    <%}%>"><i
+                        class="bi bi-minecart me-2"
+                ></i>
+                    Quản lý đánh giá
+                </a>
+
                 <a href="<%=request.getContextPath()%>/admin?func=customer_management"
                    class="nav-item nav-link
                    <%if(func.equals("customer_management")){%>
@@ -180,6 +190,7 @@
                                  <%}%>"><i
                         class="fa-brands fa-gratipay me-2"
                 ></i>Thay đổi banners, tips</a>
+
 <%--                <a href="<%=request.getContextPath()%>/admin?func=support"--%>
 <%--                   class="nav-item nav-link--%>
 <%--                    <%if(func.equals("support")){%>--%>
