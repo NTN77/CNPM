@@ -72,6 +72,7 @@
         crossorigin="anonymous"></script>
 
 <%--Danh Mục--%>
+
 <div class="categorys d-flex overflow-auto" style="white-space: nowrap">
     <%for (Category cate : categoryP) {%>
     <%int idProImage = CategoryDAO.oneProductofCategory(cate.getId());%>
@@ -295,6 +296,55 @@
         <p>Bản quyền thuộc về HEADQUARTERS| Cung cấp bởi HEADQUARTERS</p>
     </div>
 </div>
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+        chat-title="HandmadeShop"
+        agent-id="19855501-d748-463c-969e-ee1ff94c19c6"
+        language-code="vi"
+></df-messenger>
+<style>
+    df-messenger {
+        --df-messenger-chat-height: 400px;  /* 👈 chỉnh chiều cao khung chat */
+        --df-messenger-button-titlebar-color: #4CAF50; /* màu thanh tiêu đề */
+        --df-messenger-button-titlebar-font-color: white; /* màu chữ tiêu đề */
+        --df-messenger-chat-background-color: #f5f5f5; /* màu nền khung chat */
+        --df-messenger-font-color: #333; /* màu chữ */
+        --df-messenger-send-icon: #4CAF50; /* màu nút gửi */
+        --df-messenger-user-message: #dff0d8; /* màu tin nhắn của user */
+        --df-messenger-bot-message: #ffffff; /* màu tin nhắn của bot */
+    }
+
+    df-messenger::part(chat-wrapper) {
+        bottom: 90px; /* vị trí chatbot */
+        right: 40px;
+        max-height: 400px;     /* giới hạn chiều cao */
+        height: 400px;
+        z-index: 9999;
+    }
+
+    df-messenger::part(titlebar) {
+        background-color: #4CAF50;
+        font-family: 'Arial';
+        font-weight: bold;
+    }
+
+    df-messenger::part(send-button) {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    df-messenger::part(input-box) {
+        font-size: 16px;
+        color: #333;
+    }
+
+
+    df-messenger::part(chat-window) {
+        max-height: 400px;     /* phần cửa sổ chat */
+        overflow-y: auto;
+
+    }
+</style>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

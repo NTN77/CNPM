@@ -38,7 +38,22 @@
       <artifactId>h2</artifactId>
       <version>2.1.214</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-dialogflow</artifactId>
+      <version>4.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>1.18.0</version>
+    </dependency>
 
+    <dependency>
+      <groupId>com.google.api</groupId>
+      <artifactId>api-common</artifactId>
+      <version>2.20.0</version>
+    </dependency>
     <dependency>
       <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
       <groupId>javax.mail</groupId>
