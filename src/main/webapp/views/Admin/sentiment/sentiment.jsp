@@ -1,4 +1,3 @@
-
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="model.bean.*" %>
@@ -82,7 +81,7 @@
 %>
 <body>
 <div class="container-fluid mx-auto mt-2">
-<%--     action="<%=request.getContextPath()%>/admin/sentiment" method="post" --%>
+    <%--     action="<%=request.getContextPath()%>/admin/sentiment" method="post" --%>
     <form action="<%=request.getContextPath()%>/admin/sentiment" method="post" id="sentimentForm">
         <div class="customer_list  mt-5 ">
             <h3 class="d-flex justify-content-center text-danger">Quản lý đánh giá</h3>
@@ -116,20 +115,22 @@
                         <td class="text-center">
                             <%= r.getTongDanhGia() %>
                         </td>
-<%--                        Tiêu cực--%>
+                        <%--                        Tiêu cực--%>
                         <td class="text-center">5
                         </td>
-<%--                        Tích cực--%>
+                        <%--                        Tích cực--%>
                         <td class="text-center">3
                         </td>
-<%--                        Trung lập--%>
+                        <%--                        Trung lập--%>
                         <td class="text-center">2
                         </td>
                         <td class="text-center"><%=r.getDanhGiaTrungBinh()%>
                         </td>
 
                         <td>
-                            <button type="button" class="btn btn-sm btn-info" onclick='showDetailModal(<%=r.getProductId()%>)'>Chi tiết</button>
+                            <button type="button" class="btn btn-sm btn-info"
+                                    onclick='showDetailModal(<%=r.getProductId()%>)'>Chi tiết
+                            </button>
                         </td>
                     </tr>
                     <%
@@ -154,7 +155,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đánh giá</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="m-3">
+                <button type="button" class="btn btn-primary" onclick="exportToCSV()">Xuất CSV</button>
             </div>
             <div class="modal-body">
                 <table id="reviewTable" class="table table-bordered table-striped w-100">
@@ -217,8 +220,6 @@
     });
 
 
-
-
     function showDetailModal(productId) {
         fetch('<%=request.getContextPath()%>/admin/sentimentDetail?id=' + productId)
             .then(res => res.json())
@@ -253,7 +254,29 @@
             });
     }
 
+    function exportToCSV() {
+        let table = $('#reviewTable').DataTable(); // Gọi đúng bảng chi tiết đánh giá
+        let data = table.rows().data();
 
+        let csvContent = '\uFEFF';
+        csvContent += "Comment,Thái độ\n"; // Header của CSV
+
+        data.each(function (row) {
+            let comment = row[3]; // Cột Bình luận
+            let attitude = row[4]; // Cột Thái độ
+            let csvRow = `"${comment}","${attitude}"\n`;
+            csvContent += csvRow;
+        });
+
+        let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "danhgia.csv";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
 </script>
 <script src="<%=request.getContextPath()%>/views/Admin/js/logging.reload.js"></script>
