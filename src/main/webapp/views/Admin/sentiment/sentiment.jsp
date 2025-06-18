@@ -85,6 +85,11 @@
     <form action="<%=request.getContextPath()%>/admin/sentiment" method="post" id="sentimentForm">
         <div class="customer_list  mt-5 ">
             <h3 class="d-flex justify-content-center text-danger">Quản lý đánh giá</h3>
+            <div>
+                <a href="<%=request.getContextPath()%>/admin/exportRateCSV" class="btn btn-outline-primary mb-3">
+                    <i class="fa-solid fa-download"></i> Xuất CSV
+                </a>
+            </div>
             <div class="table-wrapper-scroll-y my-custom-scrollbar d-flex justify-content-center mt-3">
                 <table id="data" class="table table-striped table-hover" style="min-width: 1000px; width: 100%;">
                     <thead>
@@ -92,9 +97,9 @@
                         <th class="text-nowrap text-center">Mã SP</th>
                         <th class="text-nowrap text-center col-5">Tên SP</th>
                         <th class="text-nowrap text-center">Tổng đánh giá</th>
-                        <th class="text-nowrap text-center">Tiêu cực</th>
-                        <th class="text-nowrap text-center">Tích cực</th>
-                        <th class="text-nowrap text-center">Trung lập</th>
+<%--                        <th class="text-nowrap text-center">Tiêu cực</th>--%>
+<%--                        <th class="text-nowrap text-center">Tích cực</th>--%>
+<%--                        <th class="text-nowrap text-center">Trung lập</th>--%>
                         <th class="text-nowrap text-center">Điểm đánh giá trung bình</th>
                         <th class="text-nowrap text-center">Chi tiết</th>
                     </tr>
@@ -115,15 +120,15 @@
                         <td class="text-center">
                             <%= r.getTongDanhGia() %>
                         </td>
-                        <%--                        Tiêu cực--%>
-                        <td class="text-center">5
-                        </td>
-                        <%--                        Tích cực--%>
-                        <td class="text-center">3
-                        </td>
-                        <%--                        Trung lập--%>
-                        <td class="text-center">2
-                        </td>
+<%--                        &lt;%&ndash;                        Tiêu cực&ndash;%&gt;--%>
+<%--                        <td class="text-center">5--%>
+<%--                        </td>--%>
+<%--                        &lt;%&ndash;                        Tích cực&ndash;%&gt;--%>
+<%--                        <td class="text-center">3--%>
+<%--                        </td>--%>
+<%--                        &lt;%&ndash;                        Trung lập&ndash;%&gt;--%>
+<%--                        <td class="text-center">2--%>
+<%--                        </td>--%>
                         <td class="text-center"><%=r.getDanhGiaTrungBinh()%>
                         </td>
 
@@ -218,7 +223,18 @@
             });
         }
     });
+    function formatDate(dateString) {
+        dateString = dateString.replace(".0", "");
+        const date = new Date(dateString);
 
+        if (isNaN(date.getTime())) return dateString;
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    }
 
     function showDetailModal(productId) {
         fetch('<%=request.getContextPath()%>/admin/sentimentDetail?id=' + productId)
@@ -233,13 +249,15 @@
                 }
 
                 data.forEach(item => {
+                    const formattedDate = formatDate(item.createDate);
+
                     const row = `
                     <tr>
                         <td>${item.productName}</td>
                         <td>${item.userName}</td>
-                        <td>${item.createDate}</td>
+                        <td>${formattedDate}</td>
                         <td>${item.comment}</td>
-                        <td>Tốt</td>
+                        <td>${item.sentiment}</td>
                     </tr>
                 `;
                     tableBody.insertAdjacentHTML("beforeend", row);

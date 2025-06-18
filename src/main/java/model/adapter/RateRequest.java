@@ -11,21 +11,28 @@ public class RateRequest implements Serializable {
     private String comment;
     private int TongDanhGia;
     private double DanhGiaTrungBinh;
-
+    private String sentiment;
     public RateRequest() {
 
     }
 
-    public RateRequest(int productId, String name, int tongDanhGia, double danhGiaTrungBinh, String comment, Timestamp createDate, int changeNumber) {
+    public RateRequest(int productId, String name, Timestamp createDate, String comment, int tongDanhGia, double danhGiaTrungBinh, String sentiment) {
         this.productId = productId;
         this.name = name;
+        this.createDate = createDate;
+        this.comment = comment;
         TongDanhGia = tongDanhGia;
         DanhGiaTrungBinh = danhGiaTrungBinh;
-        this.comment = comment;
-        this.createDate = createDate;
+        this.sentiment = sentiment;
     }
 
+    public String getSentiment() {
+        return sentiment;
+    }
 
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
+    }
 
     public int getProductId() {
         return productId;

@@ -34,6 +34,7 @@ public class SentimentAdminController extends HttpServlet {
             json.addProperty("userName", rq.getUserName());
             json.addProperty("createDate", rq.getCreateDate().toString());
             json.addProperty("comment", rq.getComment());
+            json.addProperty("sentiment", rq.getSentiment());
             jsonArray.add(json);
         }
 
