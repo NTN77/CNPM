@@ -223,11 +223,11 @@ public class ProductService {
         return -1;
     }
 
-    public void changeRate(int productId, int userId, int starRatings, String comment) {
+    public void changeRate(int productId, int userId, int starRatings, String comment, String sentiment) {
         if (ProductDAO.rateExists(productId, userId) != null) {
-            ProductDAO.updateRate(productId, userId, starRatings, comment);
+            ProductDAO.updateRate(productId, userId, starRatings, comment, sentiment);
         } else {
-            ProductDAO.insertRate(productId, userId, starRatings, comment);
+            ProductDAO.insertRate(productId, userId, starRatings, comment, sentiment);
         }
     }
 
