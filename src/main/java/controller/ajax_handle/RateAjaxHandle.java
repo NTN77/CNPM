@@ -25,7 +25,7 @@ import java.util.Map;
 @WebServlet("/rate-ajax-handle")
 public class RateAjaxHandle extends HttpServlet {
 
-    private static final String URL_SETIMENT = "https://d547-35-185-8-178.ngrok-free.app/analyze";
+    private static final String URL_SETIMENT = "https://dc8b-34-169-242-27.ngrok-free.app/analyze";
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -65,32 +65,6 @@ public class RateAjaxHandle extends HttpServlet {
                 int p = Integer.parseInt(productId);
                 int s = Integer.parseInt(ratingValue);
                 int u = sessionUser != null ? sessionUser.getId() : null;
-
-                ProductService.getInstance().changeRate(p, u, s, comment);
-                List<Rate> rates = ProductService.getInstance().getRatesFirstUser(p, u);
-                List<RateResponse> rateResponses = new ArrayList<>();
-                String name = "";
-                for (Rate rate : rates) {
-                    name = UserService.getInstance().getNameById(rate.getUserId());
-                    rateResponses.add(new RateResponse(rate.getProductId(), rate.getUserId(),name, rate.getStarRatings(), rate.getComment(), rate.getCreateDate(), rate.getChangeNumber()));
-                }
-                Gson gson = new Gson();
-                String jsonRatesResponse = gson.toJson(rateResponses);
-                resp.setContentType("application/json");
-                resp.setCharacterEncoding("UTF-8");
-                System.out.println(jsonRatesResponse);
-                resp.getWriter().write(jsonRatesResponse);
-            } else if (action.equals("rating")) {
-                if (sessionUser == null) {
-                    resp.getWriter().write("no user");
-                    return;
-                }
-                String comment = req.getParameter("comment");
-                String star = req.getParameter("star");
-                if (comment == null || star == null) {
-                    resp.getWriter().write("empty");
-                    return;
-                }
                 OkHttpClient client = new OkHttpClient();
                 Map<String, String> data = new HashMap<>();
                 data.put("text", comment);
@@ -100,21 +74,26 @@ public class RateAjaxHandle extends HttpServlet {
                 RequestBody body = RequestBody.create(
                         json, MediaType.parse("application/json"));
                 Request request = new Request.Builder().url(URL_SETIMENT).post(body).build();
+
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseBody = response.body().string();
                         Type type = new TypeToken<Map<String, Object>>(){}.getType();
                         Map<String, Object> result = gson.fromJson(responseBody, type);
                         String sentiment = (String) result.get("sentiment");
-                        RateNew rateNew = new RateNew(
-                                Integer.parseInt(productId), sessionUser.getId(), Integer.parseInt(star), comment,
-                                0, sentiment);
-                        RateNewService rateNewService = RateNewService.getInstance();
-                        if (rateNewService.insertRate(rateNew) != 0) {
-                            resp.getWriter().write("success");
-                        } else {
-                            resp.getWriter().write("0");
+                        ProductService.getInstance().changeRate(p, u, s, comment, sentiment);
+                        List<Rate> rates = ProductService.getInstance().getRatesFirstUser(p, u);
+                        List<RateResponse> rateResponses = new ArrayList<>();
+                        String name = "";
+                        for (Rate rate : rates) {
+                            name = UserService.getInstance().getNameById(rate.getUserId());
+                            rateResponses.add(new RateResponse(rate.getProductId(), rate.getUserId(),name, rate.getStarRatings(), rate.getComment(), rate.getCreateDate(), rate.getChangeNumber()));
                         }
+                        String jsonRatesResponse = gson.toJson(rateResponses);
+                        resp.setContentType("application/json");
+                        resp.setCharacterEncoding("UTF-8");
+                        System.out.println(jsonRatesResponse);
+                        resp.getWriter().write(jsonRatesResponse);
                     } else {
                         System.err.println("Lỗi khi gọi API: " + response.code());
                         resp.getWriter().write("error server");
@@ -123,6 +102,7 @@ public class RateAjaxHandle extends HttpServlet {
                     e.printStackTrace();
                     resp.getWriter().write("error server");
                 }
+
             }
         }
     }

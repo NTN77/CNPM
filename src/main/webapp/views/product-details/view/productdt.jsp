@@ -333,9 +333,6 @@
 <section id="rating-comment" class="rating container mb-5">
     <div class="rating-start">
         <h4 pb-1>Đánh giá sản phẩm</h4>
-        <button class="btn-rating" data-bs-toggle="modal" data-bs-target="#ratingModal" style="font-size: 16px">
-            Đánh giá sản phẩm
-        </button>
     </div>
     <div class="d-flex">
         <div class="p-1 m-3 rounded-2 bg-light border text-center" style="cursor: pointer; width: 70px"
@@ -438,10 +435,21 @@
                       rows="3" placeholder="Viết bình luận"></textarea>
         </div>
         <% if (changeNumber == 0) {%>
+        <div id="loading-spinner" style="display: none; text-align: center; margin-top: 10px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
         <button type="button" class="btn  btn-outline-warning w-100" id="btn_editRating" onclick="addRating()">
             Hoàn tất chỉnh sửa đánh giá
         </button>
+
         <%} else if (changeNumber == -1) {%>
+        <div id="loading-spinner" style="display: none; text-align: center; margin-top: 10px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
         <button type="button" class="btn  btn-outline-success w-100" id="btn_addRating" onclick="addRating()">
             Hoàn tất đánh giá
         </button>
@@ -458,40 +466,6 @@
        value="<%=sessionUser.getId()%>"
        id="userId">
 <%}%>
-
-<!-- Modal đánh giá -->
-<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Đánh giá sản phẩm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3 text-center">
-                    <label class="form-label d-block">Số sao:</label>
-                    <div id="starRating" class="fs-3">
-                        <i class="fa-regular fa-star star" data-value="1"></i>
-                        <i class="fa-regular fa-star star" data-value="2"></i>
-                        <i class="fa-regular fa-star star" data-value="3"></i>
-                        <i class="fa-regular fa-star star" data-value="4"></i>
-                        <i class="fa-regular fa-star star" data-value="5"></i>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="comment" class="form-label">Nhận xét:</label>
-                    <textarea class="form-control" id="modal_comment" rows="3" placeholder="Hãy chia sẻ cảm nhận của bạn..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="submitRating" class="btn btn-primary">Gửi đánh giá</button>
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal đánh giá: end -->
 
 <!--    Footer-->
 <%@include file="/views/Footer/footer.jsp" %>
@@ -755,6 +729,8 @@
             document.getElementById("rate_validate").style.display = "block"
         } else {
             document.getElementById("rate_validate").style.display = "none";
+            document.getElementById("loading-spinner").style.display = "block";
+
             $.ajax({
                 method: "POST",
                 url: "/HandMadeStore/rate-ajax-handle",
@@ -765,6 +741,15 @@
                     comment: comment
                 },
                 success: function (response) {
+                    if (response != null && response == "error server") {
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Lỗi đánh giá bình luận người dùng",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
                     // Xóa bỏ DataTable nếu đã tồn tại
                     if ($.fn.dataTable.isDataTable('#rate_table')) {
                         $('#rate_table').DataTable().clear().destroy();
@@ -858,6 +843,7 @@
                             btnEditRating.className = "btn btn-outline-warning w-100";
                             btnEditRating.id = "btn_editRating";
                             btnEditRating.innerText = "Hoàn tất chỉnh sửa đánh giá";
+                            document.getElementById("loading-spinner").style.display = "none";
                             btnEditRating.onclick = addRating;
 
                             if (btnAddRating) {
@@ -873,100 +859,6 @@
         }
     }
 
-    //  Đánh giá sao
-    let selectedStar = 0;
-
-    document.querySelectorAll('#starRating .star').forEach(function (star) {
-        star.addEventListener('click', function () {
-            selectedStar = parseInt(this.dataset.value);
-            document.querySelectorAll('#starRating .star').forEach(function (s, idx) {
-                s.classList.toggle('fa-solid', idx < selectedStar);
-                s.classList.toggle('fa-regular', idx >= selectedStar);
-                s.classList.toggle('selected', idx < selectedStar);
-            });
-        });
-    });
-
-    const ratingModal = document.getElementById('ratingModal');
-    ratingModal.addEventListener('hidden.bs.modal', function () {
-        document.activeElement.blur();
-    });
-
-    document.getElementById("submitRating").addEventListener("click", function () {
-        const comment = document.getElementById("modal_comment").value;
-
-        if (selectedStar === 0) {
-            Swal.fire("Vui lòng chọn số sao!");
-            return;
-        }
-
-        if (!comment.trim()) {
-            Swal.fire("Vui lòng nhập nhận xét!");
-            return;
-        }
-
-        $.ajax({
-            method: "POST",
-            url: "/HandMadeStore/rate-ajax-handle",
-            data: {
-                action: "rating",
-                productId: <%=product.getId()%>,
-                star: selectedStar,
-                comment: comment
-            },
-            success: function (response) {
-                if (response != null && response == 'no user') {
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: "Vui lòng đăng nhập",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    $('#ratingModal').modal('hide');
-                }
-                if (response != null && response == "success") {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đánh giá thành công!',
-                        timer: 1500
-                    });
-                    $('#ratingModal').modal('hide');
-                }
-                if (response != null && response == "0") {
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: "Lưu đánh giá thất bại ",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else if (response != null && response == "empty") {
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: "Vui lòng chọn sao và bình luận",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                } else if(response != null && response == "error server") {
-                    Swal.fire({
-                        position: "center",
-                        icon: "error",
-                        title: "Lỗi đánh giá bình luận người dùng",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }
-            },
-            error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Lỗi khi gửi đánh giá!',
-                });
-            }
-        })
-    });
 
 </script>
 </body>

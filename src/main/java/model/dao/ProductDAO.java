@@ -732,22 +732,23 @@ public class ProductDAO {
         return rate.isEmpty() ? null : rate.get();
     }
 
-    public static void insertRate(int productId, int userId, int starRatings, String comment) {
+    public static void insertRate(int productId, int userId, int starRatings, String comment, String sentiment) {
         if (starRatings < 1 || starRatings > 5) {
             throw new IllegalArgumentException("starRatings must be between 1 and 5");
         }
 
         JDBIConnector.me().useHandle(handle ->
-                handle.createUpdate("INSERT INTO `rate` (productId, userId, starRatings, comment) VALUES (:productId, :userId, :starRatings, :comment)")
+                handle.createUpdate("INSERT INTO `rate` (productId, userId, starRatings, comment, sentiment) VALUES (:productId, :userId, :starRatings, :comment, :sentiment)")
                         .bind("productId", productId)
                         .bind("userId", userId)
                         .bind("starRatings", starRatings)
                         .bind("comment", comment)
+                        .bind("sentiment", sentiment)
                         .execute()
         );
     }
 
-    public static void updateRate(int productId, int userId, int starRatings, String comment) {
+    public static void updateRate(int productId, int userId, int starRatings, String comment, String sentiment) {
         Rate rate = rateExists(productId, userId);
         if (starRatings < 1 || starRatings > 5) {
             throw new IllegalArgumentException("starRatings must be between 1 and 5");
@@ -755,12 +756,13 @@ public class ProductDAO {
             throw new IllegalArgumentException("Không thể vì đã chỉnh sửa đánh giá");
         }
         JDBIConnector.me().useHandle(handle ->
-                handle.createUpdate("UPDATE `rate` SET starRatings = :starRatings, comment = :comment, createDate = CURRENT_TIMESTAMP, changeNumber =:changeNumber WHERE productId = :productId AND userId = :userId")
+                handle.createUpdate("UPDATE `rate` SET sentiment = :sentiment, starRatings = :starRatings, comment = :comment, createDate = CURRENT_TIMESTAMP, changeNumber =:changeNumber WHERE productId = :productId AND userId = :userId")
                         .bind("productId", productId)
                         .bind("userId", userId)
                         .bind("starRatings", starRatings)
                         .bind("comment", comment)
                         .bind("changeNumber", 1)
+                        .bind("sentiment", sentiment)
                         .execute()
         );
     }
